@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES5",
+    "module": "CommonJS",
+    "lib": ["ES6", "DOM"],
+    "baseUrl": "src",
+    "outDir": "dist",
+    "rootDir": "src",
+    "typeRoots": ["node_modules/@types", "src/@types"],
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "strictFunctionTypes": true,
+    "noImplicitAny": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
