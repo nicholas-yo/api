@@ -1,14 +1,19 @@
+import { cyanBright } from 'cli-color';
 import process from 'process';
 
 (async () => {
   const { default: server } = await import('./server/index');
-  const { default: url } = await import('./config/url');
+  const {
+    default: { hostname, port, protocol }
+  } = await import('./config/url');
 
-  const { hostname, port, protocol } = url;
+  server.listen(port, () => {
+    const init = (msg: string) => cyanBright(msg);
 
-  (await server).listen(port, () => {
-    console.log(`Running at ${protocol}${hostname}:${port}`);
+    console.log(
+      init(`[${process.pid}] - 🚀 Running at ${protocol}${hostname}:${port}`)
+    );
   });
 
-  process.on('exit', async () => (await server).close());
+  process.on('exit', () => server.close());
 })();

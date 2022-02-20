@@ -1,27 +1,39 @@
-export default (async () => {
-  const { createServer } = await import('http');
+import { createServer } from 'http';
 
+export default (() => {
   const server = createServer(async (req, res) => {
     const { parse } = await import('url');
 
     const {
-      default: { bodyParser }
-    } = await import('../utils/body');
-    const { default: jsonParser } = await import('../utils/json');
+      default: { body, cookies }
+    } = await import('../utils/request');
+    const {
+      default: { json, send }
+    } = await import('../utils/response');
     const { default: routes } = await import('../routes/index');
-
-    const { json } = await jsonParser;
 
     const query = parse(req.url as string, true).query;
 
     Object.defineProperty(req, 'body', {
       enumerable: true,
       configurable: false,
-      get: async () => await bodyParser(req)
+      get: () => body(req)
+    });
+
+    Object.defineProperty(res, 'send', {
+      enumerable: false,
+      configurable: false,
+      get: () => send.bind(null, res)
+    });
+
+    Object.defineProperty(req, 'cookies', {
+      configurable: false,
+      enumerable: true,
+      get: () => cookies.bind(null, req)()
     });
 
     Object.defineProperty(res, 'json', {
-      enumerable: true,
+      enumerable: false,
       configurable: false,
       get: () => json.bind(null, res)
     });

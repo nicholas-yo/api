@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
-    "target": "ES5",
+    "target": "ESNext",
     "module": "CommonJS",
     "lib": ["ES6", "DOM"],
     "baseUrl": "src",
@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "removeComments": true,
     "strictFunctionTypes": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "watch": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

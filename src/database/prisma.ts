@@ -1,5 +1,6 @@
-export default (async () => {
-  const { PrismaClient } = await import('@prisma/client');
+import { PrismaClient } from '@prisma/client';
+
+export default (() => {
   const prisma = new PrismaClient();
 
   return {
