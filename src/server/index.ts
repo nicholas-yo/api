@@ -42,7 +42,7 @@ export default (async () => {
 
       const path = `/${root}/${routes.join('/')}`;
 
-      const pattern = /[?][a-z]*=[A-Z0-9._%+-]*/i;
+      const pattern = /[?][a-z]*=[a-z0-9._%+-]*/i;
 
       if (path.search(pattern)) {
         const searchQuery = path.match(pattern);
