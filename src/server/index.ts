@@ -1,14 +1,14 @@
+import { response } from '@utils/response';
+import { request } from '@utils/request';
 import { createServer } from 'http';
 
 export const server = (() => {
   return createServer(async (req, res) => {
     const { parse } = await import('url');
 
-    const { response } = await import('../utils/response');
-    const { request } = await import('../utils/request');
     const { routes } = await import('../routes/index');
 
-    const query = parse(req.url as string, true).query;
+    const { query } = parse(req.url as string, true);
 
     (() => {
       Object.defineProperty(req, 'body', {
@@ -44,20 +44,15 @@ export const server = (() => {
     })();
 
     const extractPath = ((): string => {
-      const arrayPath = req.url?.split('/') as string[];
+      const [root, ...routes] = req.url.split('/').filter(x => x);
 
-      arrayPath[0] || arrayPath.splice(0, 1);
-
-      const [root, ...routes] = arrayPath;
-
-      const path = `/${root}/${routes.join('/')}`;
+      const path = `/${root}/${routes.join('/')}`.replace(/[/]$/, '');
 
       const pattern = /[?|&][a-z]*=[a-z0-9._%+-]*/gi;
 
       if (pattern.test(path)) {
-        const formattedQuery = path
-          .match(pattern)
-          .reduce((acc, currentValue) => {
+        const formattedQuery = (() =>
+          path.match(pattern).reduce((acc, currentValue) => {
             const [key, value] = currentValue.split('=');
             const formattedKey = key.startsWith('?')
               ? key.split('?').join('')
@@ -66,7 +61,7 @@ export const server = (() => {
             acc[formattedKey] = value;
 
             return acc;
-          }, {});
+          }, {}))();
 
         const searchQuery = path.match(pattern);
         const newPath = path.replace(`${searchQuery?.join('')}`, '');
