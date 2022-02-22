@@ -4,8 +4,8 @@ export const server = (() => {
   return createServer(async (req, res) => {
     const { parse } = await import('url');
 
-    const { response } = await import('@utils/response');
-    const { request } = await import('@utils/request');
+    const { response } = await import('../utils/response');
+    const { request } = await import('../utils/request');
     const { routes } = await import('../routes/index');
 
     const query = parse(req.url as string, true).query;
