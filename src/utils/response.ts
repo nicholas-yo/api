@@ -1,18 +1,6 @@
 import type { Response } from 'http';
 
-export default (() => {
-  const Headers = (header?: Record<string, string>) => {
-    const defautHeader = {
-      'Content-Type': 'application/json'
-    };
-
-    if (header) {
-      return { ...defautHeader, ...header };
-    }
-
-    return defautHeader;
-  };
-
+export const response = (() => {
   function send(res: Response, chunk: unknown) {
     return res.end(chunk);
   }
@@ -22,7 +10,6 @@ export default (() => {
   }
 
   return {
-    Headers,
     send,
     json
   };

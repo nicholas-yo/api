@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "target": "ESNext",
-    "module": "CommonJS",
     "lib": ["ES6", "DOM"],
     "baseUrl": "src",
-    "outDir": "dist",
+    "paths": {
+      "@database/*": ["./database/*"],
+			"@utils/*": ["./utils/*"]
+    },
     "rootDir": "src",
     "typeRoots": ["node_modules/@types", "src/@types"],
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "removeComments": true,
-    "strictFunctionTypes": true,
-    "noImplicitAny": true,
-    "watch": true
+    "removeComments": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

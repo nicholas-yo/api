@@ -1,12 +1,32 @@
 {
+  "exclude": [".d.ts$"],
   "module": {
     "type": "commonjs"
   },
+  "minify": true,
   "jsc": {
+		"baseUrl": "src",
+		"paths": {
+      "@database/*": ["./database/*"],
+			"@utils/*": ["./utils/*"]
+    },
     "parser": {
       "syntax": "typescript",
-      "tsx": false
+      "tsx": false,
+      "dynamicImport": true,
+      "functionBind": true
     },
+    "transform": {
+      "optimizer": {
+        "simplify": false,
+        "globals": {
+          "vars": {
+            "__DEBUG__": "true"
+          }
+        }
+      }
+    },
+    "loose": true,
     "target": "es5"
   }
 }

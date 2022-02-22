@@ -1,7 +1,7 @@
-import { yellow } from 'cli-color';
 import type { Request } from 'http';
+import { yellow } from 'cli-color';
 
-export default (() => {
+export const request = (() => {
   async function body(req: Request) {
     const buffers = [];
 
@@ -20,7 +20,7 @@ export default (() => {
     const [key, value] = req.headers.cookie?.split('=') as string[];
 
     return {
-      [yellow(key)]: value
+      [key]: value
     };
   }
 

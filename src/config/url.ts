@@ -4,7 +4,7 @@ type Url = {
   port: number;
 };
 
-export default ((): Url => {
+export const url = ((): Url => {
   return {
     protocol: 'http://',
     hostname: 'localhost',
