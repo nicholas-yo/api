@@ -15,17 +15,20 @@ type AuthUser = User;
 export const logUser = (() => {
   const { prisma } = Prisma;
 
-  const root = dirname(join(__filename, './'))
-    .split('/')
-    .splice(6, 2)
-    .join('/');
-  const route = basename(join(__filename, './'))
-    .split('.')
-    .splice(0, 1)
-    .join('');
+  const route = (() => {
+    return `/${dirname(join(__filename, './'))
+      .split('/')
+      .splice(6, 2)
+      .join('/')
+		}/${basename(join(__filename, './'))
+      .split('.')
+      .splice(0, 1)
+      .join('')
+		}`;
+  })();
 
   return {
-    [`/${root}/${route}`]: async (req: Request, res: Response) => {
+    [`${route}`]: async (req: Request, res: Response) => {
       if (req.method === 'GET') {
         const { randomBytes } = await import('crypto');
         const { sign } = await import('jsonwebtoken');
