@@ -1,47 +1,38 @@
+import { createServer, Server, Request, Response } from 'http';
 import { response } from '@utils/response';
 import { request } from '@utils/request';
-import { createServer } from 'http';
+import { parse } from 'url';
 
-export const server = (() => {
-  return createServer(async (req, res) => {
-    const { parse } = await import('url');
-
-    const { routes } = await import('../routes/index');
+export const server = ((): Server =>
+  createServer(async (req: Request, res: Response): Promise<void> => {
+    const { router } = await import('../router/router');
 
     const { query } = parse(req.url as string, true);
 
-    (() => {
-      Object.defineProperty(req, 'body', {
-        enumerable: true,
-        configurable: false,
-        get: () => request.body(req)
-      });
+    Reflect.defineProperty(req, 'body', {
+      configurable: false,
+      enumerable: true,
+      value: await request.body.bind(null, req)()
+    });
 
-      Object.defineProperty(res, 'send', {
-        enumerable: false,
-        configurable: false,
-        get: () => response.send.bind(this, res)
-      });
+    Reflect.defineProperty(req, 'cookies', {
+      configurable: false,
+      enumerable: true,
+      value: request.cookies.bind(null, req)()
+    });
 
-      Object.defineProperty(req, 'cookies', {
-        configurable: false,
-        enumerable: true,
-        get: () => request.cookies.bind(this, req)()
-      });
+    Reflect.defineProperty(req, 'query', {
+      configurable: false,
+      enumerable: true,
+      get: () => query,
+      set: (value: Record<string, unknown>) => value
+    });
 
-      Object.defineProperty(res, 'json', {
-        enumerable: false,
-        configurable: false,
-        get: () => response.json.bind(this, res)
-      });
-
-      Object.defineProperty(req, 'query', {
-        configurable: false,
-        enumerable: true,
-        get: () => query,
-        set: (value: Record<string, unknown>) => value
-      });
-    })();
+    Reflect.defineProperty(res, 'json', {
+      enumerable: false,
+      configurable: false,
+      value: response.json.bind(null, res)
+    });
 
     const extractPath = ((): string => {
       const [root, ...routes] = req.url.split('/').filter(x => x);
@@ -74,6 +65,7 @@ export const server = (() => {
       return path;
     })();
 
-    (routes[extractPath] || routes[404])(req, res);
-  });
-})();
+    for (const route of [await router]) {
+      (route.get(extractPath) || route.get('/404'))(req, res);
+    }
+  }))();

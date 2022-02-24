@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 
-export default (() => {
+type PrismaReturnType = { prisma: PrismaClient };
+
+export const Prisma = ((): PrismaReturnType => {
   const prisma = new PrismaClient();
 
   return {

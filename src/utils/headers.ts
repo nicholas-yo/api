@@ -1,12 +1,8 @@
 export const Headers = (header?: Record<string, string>) => {
-  const defautHeader = {
+  const defaultHeader = {
     'Content-Type': 'application/json',
     'Cache-Control': 'max-age=3600, must-revalidate'
   };
 
-  if (header) {
-    return { ...defautHeader, ...header };
-  }
-
-  return defautHeader;
+  return header ? { ...defaultHeader, ...header } : defaultHeader;
 };

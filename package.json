@@ -9,7 +9,7 @@
     "dev": "nodemon node .",
     "build": "swc src -d dist -w",
     "test": "node ./dist/test/index.spec.js",
-		"test:dev": "nodemon node ./dist/test/index.spec.js",
+    "test:dev": "nodemon node ./dist/test/index.spec.js",
     "format": "prettier --write \"**/*.(ts|tsx|json)\""
   },
   "devDependencies": {

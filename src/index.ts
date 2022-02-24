@@ -1,5 +1,5 @@
-import { stdout, platform, pid } from 'process';
-import { cyanBright } from 'cli-color';
+import { cyan, bold } from 'cli-color';
+import { stdout } from 'process';
 
 (async () => {
   const { server } = await import('./server/index');
@@ -8,13 +8,9 @@ import { cyanBright } from 'cli-color';
   const { protocol, hostname, port } = url;
 
   const msg = (() =>
-    `[${pid}] - 🚀 Running on ${platform.toUpperCase()} at ${protocol}${hostname}:${port}`)();
-
-  server.on('error', err => console.error(err.message));
+    `${cyan(bold('start'))} => 🚀 Running at ${protocol}${hostname}:${port}`)();
 
   server.listen(port, () => {
-    const init = (msg: string) => cyanBright(msg);
-
-    stdout.write(init(`${msg}\n`));
+    stdout.write(`${msg}\n`);
   });
 })();

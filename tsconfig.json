@@ -4,7 +4,7 @@
     "baseUrl": "src",
     "paths": {
       "@database/*": ["./database/*"],
-			"@utils/*": ["./utils/*"]
+      "@utils/*": ["./utils/*"]
     },
     "rootDir": "src",
     "typeRoots": ["node_modules/@types", "src/@types"],
