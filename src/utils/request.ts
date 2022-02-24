@@ -19,13 +19,13 @@ export const request = ((): RequestFunctionReturnType => {
   }
 
   function cookies(req: Request): string | Record<string, string> {
+    if (!req.headers.cookie) return yellow('No have cookies');
+
     const [key, value] = req.headers.cookie?.split('=') as string[];
 
-    return !req.headers.cookie
-      ? yellow('No have cookies')
-      : {
-          [key]: value
-        };
+    return {
+      [key]: value
+    };
   }
 
   return {
