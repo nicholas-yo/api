@@ -7,12 +7,19 @@ export const router: Router = (async () => {
   const routes = (() =>
     new Map<string, (req: Request, res: Response) => void>())();
 
-  for await (const path of paths) {
-    const module = await import(path);
-    const newPath = path.slice(26, path.length).replace(/.js$/, '');
-    const [[, moduleReturn]] = Object.entries(module);
+  async function* modules(path: string) {
+    yield await import(path);
+  }
 
-    routes.set(newPath, moduleReturn as (req: Request, res: Response) => void);
+  for await (const path of paths) {
+    const module = (await modules(path).next()).value;
+    const routePath = path.slice(26, path.length).replace(/.js$/, '');
+    const [moduleReturn] = Object.values(module);
+
+    routes.set(
+      routePath,
+      moduleReturn as (req: Request, res: Response) => void
+    );
   }
 
   return routes;
