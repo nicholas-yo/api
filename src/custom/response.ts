@@ -1,11 +1,11 @@
 import type { Response } from 'http';
 
 type ResponseFunctionReturnType = {
-  json: (res: Response, chunk: unknown) => Response;
+  json: (res: Response, chunk: unknown) => Promise<Response>;
 };
 
 export const response = ((): ResponseFunctionReturnType => {
-  function json(res: Response, chunk: unknown) {
+  async function json(res: Response, chunk: unknown) {
     return res.end(JSON.stringify(chunk));
   }
 

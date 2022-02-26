@@ -5,10 +5,10 @@
   },
   "minify": true,
   "jsc": {
-		"baseUrl": "src",
-		"paths": {
+    "baseUrl": "src",
+    "paths": {
       "@database/*": ["./database/*"],
-			"@utils/*": ["./utils/*"]
+      "@custom/*": ["./custom/*"]
     },
     "parser": {
       "syntax": "typescript",
@@ -18,12 +18,10 @@
     },
     "transform": {
       "optimizer": {
-        "simplify": false,
-        "globals": {
-          "vars": {
-            "__DEBUG__": "true"
-          }
-        }
+        "jsonify": {
+          "minCost": 0
+        },
+        "simplify": false
       }
     },
     "loose": true,

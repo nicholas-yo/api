@@ -42,4 +42,4 @@ class Hyus {
 
 const hyus = new Hyus('../../../src/test/module.spec.ts');
 
-hyus.overrideScript(script);
+hyus.addScript(script);

@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ParsedUrlQuery } from 'querystring';
 import 'http';
 
 declare module 'http' {
   export interface Request extends IncomingMessage {
-    query: Record<string, unknown>;
-    body: any;
+    query: ParsedUrlQuery;
+    body: string;
     cookies: () => Record<string, string>;
   }
 

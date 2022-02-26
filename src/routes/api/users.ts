@@ -1,7 +1,7 @@
 import type { Request, Response } from 'http';
 
 import { Prisma } from '@database/prisma';
-import { Headers } from '@utils/headers';
+import { Headers } from '@custom/headers';
 
 const { prisma } = Prisma;
 

@@ -3,8 +3,8 @@ import { yellow } from 'cli-color';
 import { Buffer } from 'buffer';
 
 type RequestFunctionReturnType = {
-  body: (req: Request) => Promise<unknown>;
-  cookies: (req: Request) => string | Record<string, string>;
+  body: (req: Request) => Promise<string>;
+  cookies: (req: Request) => Promise<string | Record<string, string>>;
 };
 
 export const request = ((): RequestFunctionReturnType => {
@@ -18,7 +18,7 @@ export const request = ((): RequestFunctionReturnType => {
     return Buffer.concat(buffers).toString();
   }
 
-  function cookies(req: Request): string | Record<string, string> {
+  async function cookies(req: Request): Promise<string | Record<string, string>> {
     if (!req.headers.cookie) return yellow('No have cookies');
 
     const [key, value] = req.headers.cookie?.split('=') as string[];
