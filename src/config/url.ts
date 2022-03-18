@@ -10,4 +10,4 @@ export const url = ((): Url => {
     hostname: 'localhost',
     port: 3000
   };
-})()
+})();

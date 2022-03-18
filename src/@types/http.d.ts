@@ -1,10 +1,9 @@
-import type { ParsedUrlQuery } from 'querystring';
 import 'http';
 
 declare module 'http' {
   export interface Request extends IncomingMessage {
-    query: ParsedUrlQuery;
-    body: string;
+    query: Record<string, unknown>;
+    body: Promise<Record<string, unknown>>;
     cookies: () => Record<string, string>;
   }
 

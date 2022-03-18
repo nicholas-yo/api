@@ -1,5 +1,4 @@
-import { cyan, bold, red } from 'cli-color';
-import { stdout } from 'process';
+import { red, magenta } from 'cli-color';
 
 (async () => {
   const { server } = await import('./server/index');
@@ -7,16 +6,18 @@ import { stdout } from 'process';
 
   const { protocol, hostname, port } = url;
 
-  const msg = (() =>
-    `${cyan(bold('start'))} => 🚀 Running at ${protocol}${hostname}:${port}`)();
+  const writeErrMsg = (message: string) =>
+    process.stdout.write(`${red('error')} - ${message}\n`);
 
-  (await server).on('error', ({ message, name }) =>
-    stdout.write(`${red(bold(name))} => ${message}\n`)
+  server.on('error', ({ message }) => writeErrMsg(message));
+
+  server.on('clientError', ({ message }) => writeErrMsg(message));
+
+  server.listen(port, () =>
+    process.stdout.write(
+      `${`${magenta(
+        'start'
+      )} - 🚀 Running at ${protocol}${hostname}:${port}\n`}`
+    )
   );
-
-  (await server).on('clientError', ({ message, name }) =>
-    stdout.write(`${red(name)} => ${message}\n`)
-  );
-
-  (await server).listen(port, () => stdout.write(`${msg}\n`));
 })();

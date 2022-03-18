@@ -2,23 +2,20 @@ import type { Request } from 'http';
 import { yellow } from 'cli-color';
 import { Buffer } from 'buffer';
 
-type RequestFunctionReturnType = {
-  body: (req: Request) => Promise<string>;
-  cookies: (req: Request) => Promise<string | Record<string, string>>;
-};
-
-export const request = ((): RequestFunctionReturnType => {
-  async function body(req: Request): Promise<string> {
-    const buffers: Array<Buffer> = (() => [])();
+export const request = (() => {
+  async function body(req: Request) {
+    const buffers: Array<Uint8Array> = (() => [])();
 
     for await (const chunk of req) {
       buffers.push(chunk);
     }
 
-    return Buffer.concat(buffers).toString();
+    const data = Buffer.concat(buffers).toString('utf-8');
+
+    return JSON.parse(data);
   }
 
-  async function cookies(req: Request): Promise<string | Record<string, string>> {
+  function cookies(req: Request) {
     if (!req.headers.cookie) return yellow('No have cookies');
 
     const [key, value] = req.headers.cookie?.split('=') as string[];

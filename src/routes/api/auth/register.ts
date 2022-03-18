@@ -1,32 +1,24 @@
 import type { Request, Response } from 'http';
 
-import { Prisma } from '@database/prisma';
 import { Headers } from '@custom/headers';
+import { Prisma } from '@service/prisma';
+import { User } from '@User';
 
-interface User {
-  email: string;
-  password: string;
-}
-
-interface RegisterUser extends User {
-  name: string;
-  confirmPassword: string;
-}
-
-const { prisma } = Prisma;
+type RegisterUser = Partial<User>;
 
 export const registerUser = async (req: Request, res: Response) => {
   if (req.method === 'POST') {
-    const { hash, genSalt } = await import('bcrypt');
+    const { email, name, surname, password, confirmPassword }: RegisterUser =
+      await req.body;
 
-    const { email, name, password, confirmPassword }: RegisterUser = JSON.parse(
-      req.body
-    );
+    const data = { email, name, surname, password };
 
-    if (!email) {
-      res.writeHead(406, Headers());
-      res.json({ error: 'You must provide a email' });
-      return;
+    for (const [key, value] of Object.entries(data)) {
+      if (!value) {
+        res.writeHead(406, Headers());
+        res.json({ error: `You must provide a ${key}` });
+        return;
+      }
     }
 
     if (!/[a-z0-9._%+-]*@[a-z]*.com/i.test(email)) {
@@ -35,7 +27,7 @@ export const registerUser = async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await Prisma.user.findUnique({
       where: {
         email
       }
@@ -47,33 +39,23 @@ export const registerUser = async (req: Request, res: Response) => {
       return;
     }
 
-    if (!name) {
-      res.writeHead(406, Headers());
-      res.json({ error: 'You must provide a name' });
-      return;
-    }
-
     if (password !== confirmPassword) {
       res.writeHead(406, Headers());
       res.json({ error: 'Password is not equal' });
       return;
     }
 
-    const salt = await genSalt(10);
-    const encryptedPassword = await hash(password, salt);
-
-    const data = {
-      email,
-      name,
-      password: encryptedPassword
-    };
-
-    const createdData = await prisma.user.create({
-      data
+    await Prisma.user.create({
+      data: {
+        email,
+        name,
+        surname,
+        password
+      }
     });
 
     res.writeHead(200, Headers());
-    res.json(createdData);
+    res.json({ msg: 'User created successfully' });
   } else {
     res.writeHead(405, Headers());
     res.json({ error: 'Method Not Allowed' });

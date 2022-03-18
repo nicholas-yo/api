@@ -1,25 +1,21 @@
 import type { Request, Response } from 'http';
 import { paths } from './paths';
 
-type Routes = Map<string, (req: Request, res: Response) => void>;
+type FunctionModuleReturn = (req: Request, res: Response) => void;
 
-type Module = Record<string, (req: Request, res: Response) => void>;
+type Module = Record<string, FunctionModuleReturn>;
 
-export const routes: Promise<Routes> = (async () => {
-  const routes: Promise<Routes> = (async () => new Map())();
-
-  async function* importModule(path: string): AsyncGenerator<Module> {
-    return yield await import(path);
-  }
+export const routes = (async () => {
+  const routes = new Map<string, FunctionModuleReturn>();
 
   for await (const path of await paths) {
-    const module: Module = (await importModule(path).next()).value;
+    const module: Module = await import(path);
 
-    const routePath: string = path.slice(26, path.length).replace(/.js$/, '');
+    const routePath: string = path.substring(26).replace(/.js$/, '');
     const [moduleReturn] = Object.values(module);
 
-    (await routes).set(routePath, moduleReturn);
+    routes.set(routePath, moduleReturn);
   }
 
-  return await routes;
+  return routes;
 })();

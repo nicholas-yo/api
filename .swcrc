@@ -5,9 +5,10 @@
   },
   "minify": true,
   "jsc": {
+    "externalHelpers": true,
     "baseUrl": "src",
     "paths": {
-      "@database/*": ["./database/*"],
+      "@service/*": ["./service/*"],
       "@custom/*": ["./custom/*"]
     },
     "parser": {

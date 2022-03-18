@@ -17,7 +17,6 @@ const script = `
 
 	deepStrictEqual(calc.sum(1, 2), 3)
 `;
-
 class Hyus {
   protected path: string;
 
@@ -30,9 +29,8 @@ class Hyus {
   }
 
   async overrideScript(script: string) {
-    return await writeFile(this.path, script).then(() => {
-      exec('npx prettier -w ./src/test/module.spec.ts');
-    });
+    await writeFile(this.path, script);
+    exec('npx prettier -w ./src/test/module.spec.ts');
   }
 
   async addScript(script: string) {
@@ -42,4 +40,4 @@ class Hyus {
 
 const hyus = new Hyus('../../../src/test/module.spec.ts');
 
-hyus.addScript(script);
+hyus.overrideScript(script);

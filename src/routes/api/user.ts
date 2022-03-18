@@ -1,9 +1,7 @@
 import type { Request, Response } from 'http';
 
 import { Headers } from '@custom/headers';
-import { Prisma } from '@database/prisma';
-
-const { prisma } = Prisma;
+import { Prisma } from '@service/prisma';
 
 export const user = async (req: Request, res: Response) => {
   if (req.method === 'PUT') {
@@ -12,18 +10,10 @@ export const user = async (req: Request, res: Response) => {
     if (!id) {
       res.writeHead(406, Headers());
       res.json({ error: 'You need provide an id' });
-      return;
+			return;
     }
 
-    const data = JSON.parse(req.body);
-
-    if (!data) {
-      res.writeHead(406, Headers());
-      res.json({ error: 'require data' });
-      return;
-    }
-
-    const user = await prisma.user.findUnique({
+    const user = await Prisma.user.findUnique({
       where: {
         id: id as string
       }
@@ -32,28 +22,28 @@ export const user = async (req: Request, res: Response) => {
     if (!user?.id) {
       res.writeHead(404, Headers());
       res.json({ error: 'This user does not exist' });
-      return;
+			return;
     }
 
-    const updatedUserData = await prisma.user.update({
-      data,
+    await Prisma.user.update({
+      data: await req.body,
       where: {
         id: id as string
       }
     });
 
     res.writeHead(200, Headers());
-    res.json(updatedUserData);
+    res.json({ msg: 'User successfully updated' });
   } else if (req.method === 'DELETE') {
     const { id } = req.query;
 
     if (!id) {
       res.writeHead(406, Headers());
       res.json({ error: 'You need provide an id' });
-      return;
+			return;
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await Prisma.user.findUnique({
       where: {
         id: id as string
       }
@@ -65,14 +55,14 @@ export const user = async (req: Request, res: Response) => {
       return;
     }
 
-    const deletedUser = await prisma.user.delete({
+    await Prisma.user.delete({
       where: {
         id: id as string
       }
     });
 
     res.writeHead(200, Headers());
-    res.json(deletedUser);
+    res.json({ msg: 'User successfully deleted' });
   } else {
     res.writeHead(405, Headers());
     res.json({ error: 'Method Not Allowed' });

@@ -3,14 +3,15 @@
     "lib": ["ES6", "DOM"],
     "baseUrl": "src",
     "paths": {
-      "@database/*": ["./database/*"],
+      "@service/*": ["./service/*"],
       "@custom/*": ["./custom/*"]
     },
     "rootDir": "src",
     "typeRoots": ["node_modules/@types", "src/@types"],
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "downlevelIteration": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

@@ -1,16 +1,10 @@
 import type { Request, Response } from 'http';
 
 import { Headers } from '@custom/headers';
-import { Prisma } from '@database/prisma';
+import { Prisma } from '@service/prisma';
+import { User } from '@User';
 
-interface User {
-  email: string;
-  password: string;
-}
-
-type AuthUser = User;
-
-const { prisma } = Prisma;
+type AuthUser = Partial<User>;
 
 export const logUser = async (req: Request, res: Response) => {
   if (req.method === 'GET') {
@@ -18,21 +12,18 @@ export const logUser = async (req: Request, res: Response) => {
     const { sign } = await import('jsonwebtoken');
     const { compare } = await import('bcrypt');
 
-    const { email, password }: AuthUser = JSON.parse(req.body);
+    const { email, password }: AuthUser = await req.body;
 
-    if (!email) {
-      res.writeHead(406, Headers());
-      res.json({ msg: `Require email` });
-      return;
-    }
+    const data = { email, password };
 
-    if (!password) {
-      res.writeHead(406, Headers());
-      res.json({ msg: `Require email` });
-      return;
-    }
+    for (const [key, value] of Object.entries(data))
+      if (!value) {
+        res.writeHead(406, Headers());
+        res.json({ msg: `missing ${key}` });
+				return;
+      }
 
-    const user = await prisma.user.findUnique({
+    const user = await Prisma.user.findUnique({
       where: {
         email
       }
@@ -41,17 +32,17 @@ export const logUser = async (req: Request, res: Response) => {
     if (!user?.email) {
       res.writeHead(404, Headers());
       res.json({ msg: `User with email ${email} not found` });
-      return;
+			return;
     }
 
     if (!(await compare(password, user?.password))) {
       res.writeHead(406, Headers());
       res.json({ msg: 'Invalid password' });
-      return;
+			return;
     }
 
-    const token = sign(user, randomBytes(26), {
-      expiresIn: '1h'
+    const token = sign(user, randomBytes(20), {
+      expiresIn: 3600
     });
 
     const { name } = user;
